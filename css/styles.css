@@ -1,0 +1,174 @@
+:root {
+  --brand-primary: #006dff;
+  --brand-primary-soft: #5ca0ff;
+  --brand-primary-bg-soft: #eaf3ff;
+}
+
+body {
+  background: #f8f9fa;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--brand-primary);
+  --bs-btn-border-color: var(--brand-primary);
+  --bs-btn-hover-bg: #005bd4;
+  --bs-btn-hover-border-color: #0054c4;
+  --bs-btn-active-bg: #0054c4;
+  --bs-btn-active-border-color: #004db5;
+}
+
+.totals-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #6c757d;
+  letter-spacing: 0.04em;
+}
+
+.totals-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.wizard-step-indicator {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.wizard-helper {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.compact-table th,
+.compact-table td {
+  padding-top: 0.32rem;
+  padding-bottom: 0.32rem;
+  padding-left: 0.42rem;
+  padding-right: 0.42rem;
+  vertical-align: middle;
+  font-size: 0.82rem;
+  border: 1px solid #cfd6df;
+}
+
+.compact-table th {
+  font-size: 0.8rem;
+  text-align: center;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.compact-table td:last-child {
+  white-space: nowrap;
+}
+
+.compact-table {
+  border: 1px solid #cfd6df;
+}
+
+.compact-table tbody td:nth-child(6),
+.compact-table tbody td:nth-child(7),
+.compact-table tbody td:nth-child(8),
+.compact-table tbody td:nth-child(9),
+.compact-table tfoot th:nth-child(2) {
+  text-align: center;
+}
+
+.assessment-type-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .assessment-type-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.assessment-type-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.5rem;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.assessment-type-card:hover {
+  border-color: var(--brand-primary-soft);
+}
+
+.assessment-type-card.is-selected {
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 0.1rem rgba(0, 109, 255, 0.18);
+}
+
+.assessment-type-title {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.assessment-type-subtitle {
+  font-size: 0.82rem;
+  color: #6c757d;
+}
+
+.logic-icon-btn {
+  width: 1.35rem;
+  height: 1.35rem;
+  padding: 0;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.35rem;
+  text-align: center;
+}
+
+.logic-content {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.logic-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.logic-node {
+  background: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 0.4rem;
+  padding: 0.45rem 0.55rem;
+}
+
+.logic-node.decision {
+  border-color: var(--brand-primary-soft);
+  background: var(--brand-primary-bg-soft);
+}
+
+.logic-node.outcome {
+  border-color: #a3cfbb;
+  background: #f0fff4;
+}
+
+.logic-arrow {
+  text-align: center;
+  color: #6c757d;
+  font-size: 0.8rem;
+  line-height: 1;
+}
+
+.logic-branch {
+  margin-left: 0.9rem;
+  padding-left: 0.6rem;
+  border-left: 2px dashed #ced4da;
+}
