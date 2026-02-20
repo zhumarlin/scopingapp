@@ -247,7 +247,7 @@ async function copyTableToClipboard() {
           "text/plain": new Blob([plain], { type: "text/plain" }),
         }),
       ]);
-      setCopyStatus("Copied table with formatting.");
+      setCopyStatus("Copied table.");
       return;
     }
 
