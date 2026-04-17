@@ -14,6 +14,7 @@ const HUMAN_MODE_REMOTE = "remote";
 
 const REPORTING_QUARTERLY = "quarterly";
 const REPORTING_MONTHLY = "monthly";
+const TRAVEL_NOTE_TEXT = "Additional travel cost would be added for locations outside of Singapore, Indonesia, and Romania";
 
 const DELIVERY_TYPE_OPTIONS = [
   {
@@ -80,6 +81,30 @@ function getReportingLabel(reportingFrequency) {
   return REPORTING_OPTIONS.find((option) => option.value === reportingFrequency)?.title || "";
 }
 
+function buildTrainingAwarenessSummaryLines(draft) {
+  if (draft.deliveryType === DELIVERY_TYPE_HUMAN) {
+    const sessions = parsePositiveInteger(draft.sessionCount);
+    return [
+      `Mode: ${getHumanModeLabel(draft.humanDeliveryMode)}`,
+      `Sessions: ${sessions}`,
+    ];
+  }
+
+  const userCount = parsePositiveInteger(draft.userCount);
+  const phishingSimulations = parseNonNegativeInteger(draft.phishingSimulationCount);
+  const fullyManaged = draft.fullyManagedOnboarding === "yes" ? "Yes" : "No";
+  const bespokeContent = draft.bespokeContent === "yes" ? "Yes" : "No";
+  const reportingLabel = getReportingLabel(draft.reportingFrequency);
+
+  return [
+    `Users: ${userCount}`,
+    `Fully managed onboarding: ${fullyManaged}`,
+    `Bespoke training content: ${bespokeContent}`,
+    `Phishing simulations per year: ${phishingSimulations}`,
+    `Reporting: ${reportingLabel}`,
+  ];
+}
+
 function calculateTrainingAwarenessMd(draft) {
   if (draft.deliveryType === DELIVERY_TYPE_HUMAN) {
     const sessions = parsePositiveInteger(draft.sessionCount);
@@ -117,34 +142,26 @@ function calculateTrainingAwarenessMd(draft) {
 }
 
 function buildTrainingAwarenessSummary(draft) {
-  if (draft.deliveryType === DELIVERY_TYPE_HUMAN) {
-    const sessions = parsePositiveInteger(draft.sessionCount);
-    const modeLabel = getHumanModeLabel(draft.humanDeliveryMode);
-    const summaryLines = [
-      `Mode: ${modeLabel}`,
-      `Sessions: ${sessions}`,
-    ];
-
-    if (draft.humanDeliveryMode === HUMAN_MODE_ONSITE) {
-      summaryLines.push("For onsite sessions outside Singapore, Indonesia, and Romania, travel cost will be confirmed during final scoping.");
-    }
-
-    return summaryLines.join("\n");
+  const lines = buildTrainingAwarenessSummaryLines(draft);
+  if (draft.deliveryType === DELIVERY_TYPE_HUMAN && draft.humanDeliveryMode === HUMAN_MODE_ONSITE) {
+    lines.push(TRAVEL_NOTE_TEXT);
   }
+  return lines.join("\n");
+}
 
-  const userCount = parsePositiveInteger(draft.userCount);
-  const phishingSimulations = parseNonNegativeInteger(draft.phishingSimulationCount);
-  const fullyManaged = draft.fullyManagedOnboarding === "yes" ? "Yes" : "No";
-  const bespokeContent = draft.bespokeContent === "yes" ? "Yes" : "No";
-  const reportingLabel = getReportingLabel(draft.reportingFrequency);
+function buildTrainingAwarenessReviewHtml(draft) {
+  const lines = buildTrainingAwarenessSummaryLines(draft);
+  const content = lines.map((line) => `<div>${escapeHtml(line)}</div>`).join("");
+  const travelNoteMarkup = draft.deliveryType === DELIVERY_TYPE_HUMAN && draft.humanDeliveryMode === HUMAN_MODE_ONSITE
+    ? `<div class="travel-cost-note mt-2">${escapeHtml(TRAVEL_NOTE_TEXT)}</div>`
+    : "";
 
-  return [
-    `Users: ${userCount}`,
-    `Fully managed onboarding: ${fullyManaged}`,
-    `Bespoke training content: ${bespokeContent}`,
-    `Phishing simulations per year: ${phishingSimulations}`,
-    `Reporting: ${reportingLabel}`,
-  ].join("\n");
+  return `
+    <div class="ttx-summary-lines">
+      ${content}
+      ${travelNoteMarkup}
+    </div>
+  `;
 }
 
 function renderServiceConfigurationStep(draft, errors) {
@@ -173,7 +190,7 @@ function renderServiceConfigurationStep(draft, errors) {
           placeholder="Enter number of sessions"
         >
         ${draft.humanDeliveryMode === HUMAN_MODE_ONSITE ? `
-          <div class="wizard-helper mt-2">For onsite sessions outside Singapore, Indonesia, and Romania, travel cost will be confirmed during final scoping.</div>
+          <div class="travel-cost-note mt-2">${escapeHtml(TRAVEL_NOTE_TEXT)}</div>
         ` : ""}
         ${renderError(errors.sessionCount)}
       </div>
@@ -410,6 +427,7 @@ export const trainingAwarenessService = {
   buildAssessment(draft) {
     const md = calculateTrainingAwarenessMd(draft);
     const detailSummary = buildTrainingAwarenessSummary(draft);
+    const reviewDetailHtml = buildTrainingAwarenessReviewHtml(draft);
     const deliveryTypeLabel = getDeliveryTypeLabel(draft.deliveryType);
 
     return {
@@ -433,6 +451,7 @@ export const trainingAwarenessService = {
       },
       detailSummary,
       reviewDetailSummary: detailSummary,
+      reviewDetailHtml,
       md,
       createdAt: new Date().toISOString(),
     };
