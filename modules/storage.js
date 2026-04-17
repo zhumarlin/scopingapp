@@ -1,5 +1,5 @@
 const STORAGE_KEY = "scopingProject";
-const STORAGE_VERSION = "0.4.1";
+const STORAGE_VERSION = "0.4.2";
 const DEFAULT_STATE = Object.freeze({
   version: STORAGE_VERSION,
   assessments: [],
